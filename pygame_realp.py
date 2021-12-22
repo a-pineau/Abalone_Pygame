@@ -85,17 +85,18 @@ def is_valid_neighboor(init_pos, target_pos):
     )
     return target_pos in neighboors
 
-def highlight_marbles(event, marbles_pos, 
-                      marbles_rect, current):
+def highlight_marbles(mouse_pos, marbles_pos, marbles_rect, 
+                      current, init_pos):
     for t in marbles_rect:
-        if t.collidepoint(event.pos) and r != t:
-            if (marbles_pos[t.topleft] == MARBLE_FREE):
-                valid_neighboor = is_valid_neighboor(current, t.topleft)
+        target = t.topleft
+        if t.collidepoint(mouse_pos) and current != t:
+            if (marbles_pos[target] == MARBLE_FREE):
+                valid_neighboor = is_valid_neighboor(init_pos, t.topleft)
                 highlight = MARBLE_GREEN if valid_neighboor else MARBLE_RED
                 for k, v in marbles_pos.items():
                     if v in (MARBLE_GREEN, MARBLE_RED):
                         marbles_pos[k] = MARBLE_FREE
-                    marbles_pos[t.topleft] = highlight
+                    marbles_pos[target] = highlight
                     
 def mark_valid_neighboors(marbles_pos, current):
     x, y = current
@@ -130,16 +131,12 @@ def select_multiple_marbles(marbles_rect, marbles_pos):
                         marbles_pos[k] = MARBLE_BLUE
                 multiple_marbles.clear()
 
-        elif len(multiple_marbles) > 1:
-            target = r.topleft
-            last_selection = multiple_marbles[-1]
-            if (r.collidepoint(mouse_pos) 
-                and marbles_pos[target] == MARBLE_FREE):
-                    if is_valid_range(multiple_marbles):
-                        if is_valid_neighboor(last_selection, target):
-                            if MARBLE_GREEN not in marbles_pos.values():
-                                marbles_pos[target] = MARBLE_GREEN
-
+            elif len(multiple_marbles) in (2, 3):
+                if is_valid_range(multiple_marbles):
+                    target = r.topleft
+                    last_selection = multiple_marbles[-1]
+                    highlight_marbles(mouse_pos, marbles_pos, marbles_rect, 
+                                      last_selection, target)
 
 def is_valid_range(multiple_marbles):
     if len(set(elem[1] for elem in multiple_marbles)) == 1:
@@ -173,15 +170,16 @@ while running:
                     and marbles_pos[r.topleft] != MARBLE_FREE):
                     moving = True
                     init_pos = r.topleft
-                    init_color = marbles_pos[init_pos]
-                    marbles_pos[init_pos] = MARBLE_FREE
+                    init_color = marbles_pos[r.topleft]
+                    marbles_pos[r.topleft] = MARBLE_FREE
                     break
         elif event.type == MOUSEBUTTONUP:
             moving = False
             marbles_pos, marbles_rect = build_marbles()
         elif event.type == MOUSEMOTION and moving:
             r.move_ip(event.rel)
-            highlight_marbles(event, marbles_pos, marbles_rect, init_pos)
+            highlight_marbles(event.pos, marbles_pos, marbles_rect, 
+                              r, init_pos)
         elif p_keys[K_LSHIFT]:
                 if p_mouse[0]:
                     select_multiple_marbles(marbles_rect, marbles_pos)
