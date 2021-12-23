@@ -84,8 +84,7 @@ def is_valid_neighboor(init_pos, target_pos, h_range=False):
     ]
     if not h_range:
         neighboors.extend([(x - 2 * MARBLE_SIZE, y),
-                           (x + 2 * MARBLE_SIZE, y),
-    ])
+                           (x + 2 * MARBLE_SIZE, y)])
     return target_pos in neighboors
 
 def recolor_marbles(marbles_pos, target, reset_list, 
@@ -96,81 +95,103 @@ def recolor_marbles(marbles_pos, target, reset_list,
     if new_color:
         marbles_pos[target] = new_color
 
-def highlight_single_marble(mouse_pos, marbles_pos, marbles_rect, 
-                            current, init_pos):
+def select_single_marble(mouse_pos, marbles_pos, marbles_rect, 
+                         current, init_pos):
+    target = None
     for t in marbles_rect:
         target = t.topleft
         if t.collidepoint(mouse_pos) and current != t:
             if (marbles_pos[target] == MARBLE_FREE):
-                valid_neighboor = is_valid_neighboor(init_pos, 
-                                                     t.topleft, 
-                                                     False)
+                valid_neighboor = is_valid_neighboor(
+                    init_pos, 
+                    t.topleft, 
+                    False)
                 highlight = MARBLE_GREEN if valid_neighboor else MARBLE_RED
                 recolor_marbles(
-                    marbles_pos, 
-                    target, 
+                    marbles_pos, target, 
                     [MARBLE_GREEN, MARBLE_RED], 
-                    MARBLE_FREE,
-                    highlight
-                )
+                    MARBLE_FREE, 
+                    highlight)
                     
-def mark_valid_neighboors(marbles_pos, current):
-    x, y = current
-    neighboors = (
-        (x - MARBLE_SIZE, y - 2 * MARBLE_SIZE),
-        (x + MARBLE_SIZE, y - 2 * MARBLE_SIZE),
-        (x - MARBLE_SIZE, y + 2 * MARBLE_SIZE),
-        (x + MARBLE_SIZE, y + 2 * MARBLE_SIZE),
-        (x - 2 * MARBLE_SIZE, y),
-        (x + 2 * MARBLE_SIZE, y),
-    )
-    for n in neighboors:
-        try:
-            marbles_pos[n] 
-        except KeyError:
-            continue
-        else:
-            if marbles_pos[n] == MARBLE_FREE:
-                marbles_pos[n] = MARBLE_GREEN
+# def mark_valid_neighboors(marbles_pos, current):
+#     x, y = current
+#     neighboors = (
+#         (x - MARBLE_SIZE, y - 2 * MARBLE_SIZE),
+#         (x + MARBLE_SIZE, y - 2 * MARBLE_SIZE),
+#         (x - MARBLE_SIZE, y + 2 * MARBLE_SIZE),
+#         (x + MARBLE_SIZE, y + 2 * MARBLE_SIZE),
+#         (x - 2 * MARBLE_SIZE, y),
+#         (x + 2 * MARBLE_SIZE, y),
+#     )
+#     for n in neighboors:
+#         try:
+#             marbles_pos[n] 
+#         except KeyError:
+#             continue
+#         else:
+#             if marbles_pos[n] == MARBLE_FREE:
+#                 marbles_pos[n] = MARBLE_GREEN
 
-def highlight_multiple_marbles(marbles_pos, marbles_rect):
+def select_marbles_range(marbles_pos, marbles_rect):
     mouse_pos = pygame.mouse.get_pos()
     for r in marbles_rect:
         if r.collidepoint(mouse_pos): 
+            # first color the selected marbles in purple (if possible)
             if marbles_pos[r.topleft] == MARBLE_BLUE:
                 marbles_pos[r.topleft] = MARBLE_PURPLE
-                multiple_marbles.add(r.topleft)
+                marbles_range.add(r.topleft)
                 # cannot select more than 3 marbles
-                if len(multiple_marbles) > 3:
-                    recolor_marbles(
-                        marbles_pos, 
-                        r.topleft, 
-                        [MARBLE_PURPLE],
-                        MARBLE_BLUE
-                    )
-                    multiple_marbles.clear()
+                if len(marbles_range) > 3:
+                    recolor_marbles(marbles_pos, r.topleft, [MARBLE_PURPLE], 
+                                    MARBLE_BLUE)
+                    marbles_range.clear()
+                    return None
+                range_type = check_range_type(marbles_range)
+                marbles_pos[r.topleft] = MARBLE_PURPLE
 
-            elif marbles_pos[r.topleft] == MARBLE_FREE:  
-                if is_valid_range(multiple_marbles):
-                    last_selection = multiple_marbles[-1]
-                    valid_neighboor = is_valid_neighboor(
-                        last_selection, 
-                        r.topleft, 
-                        True
+            # then color the new positions in green (if possible)
+            elif (marbles_pos[r.topleft] == MARBLE_FREE
+                  and len(marbles_range) > 1):
+                last_marble = marbles_range[-1]
+                if is_valid_neighboor(last_marble, r.topleft, True):
+                    new_marbles_range = []
+                    r_x = marbles_range[-1][0]
+                    l_x = marbles_range[0][0]
+                    k = 1 if l_x > r_x else -1
+
+                    for i in range(len(marbles_range)):
+                        new_marbles_range.append(
+                            (r.topleft[0] + k * 2 * i * MARBLE_SIZE, 
+                             r.topleft[1])
+                        )
+                    valid_range = all(
+                        marbles_pos[elem] == MARBLE_FREE
+                        for elem in new_marbles_range
                     )
-                    highlight = MARBLE_GREEN if valid_neighboor else MARBLE_RED
+                    if valid_range:
+                        for marble in new_marbles_range:
+                            recolor_marbles(
+                                marbles_pos, marble, 
+                                [MARBLE_RED], 
+                                MARBLE_FREE, 
+                                MARBLE_GREEN)
+                else:
                     recolor_marbles(
-                        marbles_pos, 
-                        r.topleft, 
+                        marbles_pos, r.topleft, 
                         [MARBLE_GREEN, MARBLE_RED], 
-                        MARBLE_FREE,
-                        highlight
-                    )
-            
-def is_valid_range(multiple_marbles):
-    if (len(set(elem[1] for elem in multiple_marbles)) == 1
-        and len(multiple_marbles) in (2, 3)):
-        return True
+                        MARBLE_FREE, 
+                        MARBLE_RED)
+
+def move_marbles(marbles_pos, old_marbles_range, 
+                 new_marbles_range, current_color):
+    for old_pos, new_pos in zip(old_marbles_range, new_marbles_range):
+        print(old_pos, new_pos)
+    
+def check_range_type(marbles_range):
+    if (len(set(elem[1] for elem in marbles_range)) == 1
+        and len(marbles_range) in (2, 3)):
+        return "horizontal"
+    return False
 
 def display_time_elasped(screen):
     time_elasped = f"Time: {int(pygame.time.get_ticks() / 1e3)} s"
@@ -183,7 +204,7 @@ marbles_pos, marbles_rect = build_marbles()
 # Game loop
 running = True
 moving = False
-multiple_marbles = OrderedSet()
+marbles_range = OrderedSet()
 
 while running:
     # display the current state 
@@ -208,13 +229,16 @@ while running:
             marbles_pos, marbles_rect = build_marbles()
         elif event.type == MOUSEMOTION and moving:
             r.move_ip(event.rel)
-            highlight_single_marble(event.pos, marbles_pos, 
-                                    marbles_rect, r, init_pos)
+            select_single_marble(event.pos, marbles_pos, 
+                                 marbles_rect, r, init_pos)
         elif p_keys[K_LSHIFT]:
                 if p_mouse[0]:
-                    highlight_multiple_marbles(marbles_pos, marbles_rect)
+                    new_marbles_range = select_marbles_range(
+                        marbles_pos, 
+                        marbles_rect
+                        )
                 else:
-                    multiple_marbles.clear()
+                    marbles_range.clear()
 
 
     display_marbles(screen, marbles_pos)
