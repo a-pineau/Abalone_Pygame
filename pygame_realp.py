@@ -3,8 +3,8 @@ import pygame
 import os
 
 from pygame.locals import *
-from init_configurations import BOARD_STANDARD
-from UserMessages import ask_messages, err_messages, info_messages
+from game_data import STANDARD
+from user_messages import ask_messages, err_messages, info_messages
 from ordered_set import OrderedSet
 
 pygame.init()
@@ -54,7 +54,7 @@ def build_marbles():
 
     y_init = SIZE_Y / 2 - 10 * MARBLE_SIZE # hard-coded
     disp_y = MARBLE_SIZE
-    for row in BOARD_STANDARD:
+    for row in STANDARD:
         x_init = 290 - len(row) * MARBLE_SIZE # hard-coded
         disp_x = MARBLE_SIZE
         for element in row:
@@ -226,7 +226,7 @@ while running:
                     break
         elif event.type == MOUSEBUTTONUP:
             moving = False
-            marbles_pos, marbles_rect = build_marbles()
+            # marbles_pos, marbles_rect = build_marbles()
         elif event.type == MOUSEMOTION and moving:
             r.move_ip(event.rel)
             select_single_marble(event.pos, marbles_pos, 
@@ -238,7 +238,8 @@ while running:
                         marbles_rect
                         )
                 else:
-                    marbles_range.clear()
+                    pass
+                    # marbles_range.clear()
 
 
     display_marbles(screen, marbles_pos)
