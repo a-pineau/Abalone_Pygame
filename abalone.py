@@ -129,20 +129,17 @@ class Abalone(pygame.sprite.Sprite):
             min_x = min(self.marbles_range, key=lambda t: t[0])[0]
             max_x = max(self.marbles_range, key=lambda t: t[0])[0]
             if (len(set(elem[1] for elem in self.marbles_range))) == 1:
-                valid_len = (2 * MARBLE_SIZE) * (len_range - 1)
-                if max_x - min_x == valid_len:
+                valid_len_x = (2 * MARBLE_SIZE) * (len_range - 1)
+                if max_x - min_x == valid_len_x:
                     return "horizontal"
             else:
                 min_y = min(self.marbles_range, key=lambda t: t[1])[1]
                 max_y = max(self.marbles_range, key=lambda t: t[1])[1]
-                valid_x_len = MARBLE_SIZE * (len_range - 1)
-                valid_y_len = (2 * MARBLE_SIZE) * (len_range - 1)
-                print("validx =", valid_x_len, "validx =", valid_y_len)
+                valid_len_x = MARBLE_SIZE * (len_range - 1)
+                valid_len_y = (2 * MARBLE_SIZE) * (len_range - 1)
                 current_x_len = max_x - min_x
                 current_y_len = max_y - min_y
-                print("currentx =", current_x_len, "currenty =", current_y_len)
-
-                if current_x_len == valid_x_len and current_y_len == valid_y_len:
+                if current_x_len == valid_len_x and current_y_len == valid_len_y:
                     return "diagonal"
             return False
         return True
