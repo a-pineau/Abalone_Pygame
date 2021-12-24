@@ -4,7 +4,7 @@ import os
 
 from pygame.locals import *
 from abalone import Abalone
-from game_data import *
+from constants import *
 from user_messages import ask_messages, err_messages, info_messages
 from ordered_set import OrderedSet
 from copy import deepcopy
@@ -30,8 +30,7 @@ def main():
                 if event.key == K_ESCAPE:
                     running = False
                 elif event.key == K_p:
-                    pass
-                    game.build_marbles()
+                    game.reset_game()
             # Selecting a single marble
             elif event.type == MOUSEBUTTONDOWN and not p_keys[K_LSHIFT]:
                 for r in game.marbles_rect:

@@ -4,7 +4,7 @@ import os
 import math
 
 from pygame.locals import *
-from game_data import *
+from constants import *
 from user_messages import ask_messages, err_messages, info_messages
 from ordered_set import OrderedSet
 from copy import deepcopy
@@ -69,7 +69,7 @@ class Abalone(pygame.sprite.Sprite):
         for key, value in self.marbles_pos.items():
             screen.blit(value, key)
 
-    def is_valid_neighboor(self, target_pos, h_range=False):
+    def is_valid_neighboor(self, target_pos, h_range=False) -> bool:
         """
         TODO
         """
@@ -120,6 +120,13 @@ class Abalone(pygame.sprite.Sprite):
         self.buffer_marbles_pos.clear()
         self.buffer_marbles_rect.clear()
 
+    def clear_ranges(self) -> None:
+        """
+        TODO
+        """
+        self.marbles_range.clear()
+        self.new_marbles_range.clear()
+
     def check_range_type(self):
         """
         TODO
@@ -143,6 +150,31 @@ class Abalone(pygame.sprite.Sprite):
                     return "diagonal"
             return False
         return True
+    
+    def compute_new_range(self, target, range_type) -> None:
+        """
+        TODO
+        """
+        last_marble = self.marbles_range[-1]
+        first_marble = self.marbles_range[0]
+        if range_type == "horizontal":
+            r_x = last_marble[0]
+            l_x = first_marble[0]
+            k = 1 if l_x > r_x else -1
+            for i in range(len(self.marbles_range)):
+                new_x = target[0] + k * 2 * i * MARBLE_SIZE, 
+                new_y = target[1]
+                self.new_marbles_range.add((new_x, new_y))
+        else:
+            x, y = target
+            if y == last_marble[1]:
+                k = 1 if x > last_marble[0] else - 1
+                for elem in self.marbles_range:
+                    new_x = elem[0] + k * MARBLE_SIZE
+                    new_y = elem[1] 
+                    self.new_marbles_range.add((new_x, new_y))
+        print(self.marbles_range)
+        print(self.new_marbles_range)
 
     def select_single_marble(self, mouse_pos, current) -> None:
         """
@@ -162,7 +194,7 @@ class Abalone(pygame.sprite.Sprite):
                             [MARBLE_GREEN, MARBLE_RED], 
                             MARBLE_FREE, 
                             highlight)
-                        self.new_marbles_range.clear()
+                        self.clear_ranges()
                         if valid_neighboor:
                             self.marbles_range.add(self.buffer_marble)
                             self.new_marbles_range.add(target)
@@ -174,59 +206,60 @@ class Abalone(pygame.sprite.Sprite):
         for r in self.marbles_rect:
             if self.is_inside_marble(mouse_pos, r.center): 
                 # first select a valid range of marbles
+                valid_range = self.check_range_type()
                 if self.marbles_pos[r.topleft] in (current_color, MARBLE_PURPLE):
                     self.marbles_range.add(r.topleft)
                     max_range = len(self.marbles_range) <= 3
-                    valid_range = self.check_range_type()
-                    print("valid_range =", valid_range)
                     if max_range and valid_range:
                         self.marbles_pos[r.topleft] = MARBLE_PURPLE
-                        range_type = self.check_range_type()
 
                 # then color the new positions in green (if possible)
                 elif (self.marbles_pos[r.topleft] == MARBLE_FREE
                       and len(self.marbles_range) > 1
                     ):
+                    h_range = valid_range == "horizontal"
                     self.buffer_marble = self.marbles_range[-1]
-                    if self.is_valid_neighboor(r.topleft, True):
-                        r_x = self.marbles_range[-1][0]
-                        l_x = self.marbles_range[0][0]
-                        k = 1 if l_x > r_x else -1
-
-                        for i in range(len(self.marbles_range)):
-                            self.new_marbles_range.add(
-                                (r.topleft[0] + k * 2 * i * MARBLE_SIZE, 
-                                 r.topleft[1])
-                            )
-                        valid_range = all(
-                            self.marbles_pos[elem] == MARBLE_FREE
-                            for elem in self.new_marbles_range
-                        )
-                        if valid_range:
-                            for marble in self.new_marbles_range:
-                                self.recolor_marbles(
-                                    marble, 
-                                    [MARBLE_RED], 
-                                    MARBLE_FREE, 
-                                    MARBLE_GREEN)
+                    valid_neighboor = self.is_valid_neighboor(
+                        r.topleft, 
+                        h_range)
+                    self.compute_new_range(r.topleft, valid_range)
+                    valid_new_range = all(
+                        self.marbles_pos[elem] == MARBLE_FREE
+                        for elem in self.new_marbles_range
+                    )
+                    if valid_new_range and valid_neighboor:
+                        for marble in self.new_marbles_range:
+                            self.recolor_marbles(
+                                marble, 
+                                [MARBLE_RED], 
+                                MARBLE_FREE, 
+                                MARBLE_GREEN)
                     else:
                         self.recolor_marbles(
                             r.topleft, 
                             [MARBLE_GREEN, MARBLE_RED], 
                             MARBLE_FREE, 
                             MARBLE_RED)
+                        self.clear_ranges()
 
     def update_board(self, current_color):
         """
         TODO
         """
+        # print("old:", self.marbles_range, "\n", "new:", self.new_marbles_range)
         if self.new_marbles_range:
             for old_pos, new_pos in zip(self.marbles_range, self.new_marbles_range):
                 self.marbles_pos[old_pos] = MARBLE_FREE
                 self.marbles_pos[new_pos] = current_color
+        self.clear_ranges()
 
-        self.marbles_range.clear()
-        self.new_marbles_range.clear()
+    def reset_game(self) -> None:
+        """
+        TODO
+        """
+        self.build_marbles()
+        self.clear_buffers()
+        self.clear_ranges()
 
     @staticmethod
     def is_inside_marble(marble_center, mouse_pos) -> bool:
