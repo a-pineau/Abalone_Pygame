@@ -157,11 +157,9 @@ class Abalone(pygame.sprite.Sprite):
         """
         TODO
         """
-        x, y = target
-        l_x, l_y = self.marbles_range[-1][0], self.marbles_range[-1][1]
-        k, j = self.predict_direction(x, y, l_x, l_y)
+        k, j = self.predict_direction(self.marbles_range[-1], target)
         for marble in self.marbles_range:
-            if y == l_y:
+            if target[1] == self.marbles_range[-1][1]:
                 new_x = marble[0] + k * 2 * MARBLE_SIZE
                 new_y = marble[1]
             else:
@@ -199,27 +197,45 @@ class Abalone(pygame.sprite.Sprite):
                 elif self.marbles_pos[n] == MARBLE_BLUE:
                     self.marbles_pos[n] = MARBLE_BROWN
 
-    def predict_direction(self, x, y, l_x, l_y):
+    def predict_direction(self, origin, target):
         """
         TODO
         """
-        k = 1 if x > l_x else -1
-        j = 1 if y > l_y else -1
+        k = 1 if target[0] > origin[0] else -1
+        j = 1 if target[1] > origin[1] else -1
         return k, j
 
+    def next_spot(self, origin, move_coeffs, lateral_move):
+        """
+        TODO
+        """
+        k, j = move_coeffs
+        if lateral_move:
+            x = origin[0] + k * 2 * MARBLE_SIZE
+            y = origin[1]
+        else:
+            x = origin[0] + k * MARBLE_SIZE
+            y = origin[1] + j * 2 * MARBLE_SIZE
+        return x, y
+
     def push_marbles(self, target):
-        end_move = False
+        k, j = self.predict_direction(self.buffer_marble, target)
         enemy = self.enemy(self.current_color)
+        colors = [self.current_color]
         x, y = self.buffer_marble
         t_x, t_y = target
+        lateral_move = x == t_x
+
+        end_move = False
         while not end_move:
-            sumito = enemy in self.marbles_range.values()
-            too_much_marbles = (
-                self.new_marbles_range.values.count(self.current_color) > 3
-            )
+            current_spot = self.marbles_pos[(x, y)]
+            sumito = enemy in self.new_marbles_range.values()
+            if current_spot in (enemy, self.current_color):
+                colors.append(self.marbles_pos[(x, y)])
+
+            too_much_marbles = colors.count(self.current_color) > 3
             wrong_sumito = (
-                self.new_marbles_range.count(enemy) 
-                >= self.new_marbles_range.count(self.current_color)
+                colors.count(enemy) >= colors.count(self.current_color)
             )
             if too_much_marbles or wrong_sumito:
                 for marble in self.new_marbles_range.keys():
@@ -228,6 +244,23 @@ class Abalone(pygame.sprite.Sprite):
                         [MARBLE_BLUE, MARBLE_YELLOW], 
                         MARBLE_FREE, 
                         MARBLE_RED)
+            # if we keep finding our own marbles
+            print(current_spot == self.current_color)
+            if (current_spot == self.current_color 
+                and (x, y) not in self.new_marbles_range.keys()
+            ):
+                    print("hihihi")
+                    self.new_marbles_range[(x, y)] = self.current_color
+            # we either find an enemy or an empty spot
+            elif current_spot in (enemy, MARBLE_FREE):
+                if sumito:
+                    self.new_marbles_range[(x, y)] = enemy
+                else:
+                    self.new_marbles_range[(x, y)] = self.current_color
+                # loop ends if its an actual free spot
+                if current_spot == MARBLE_FREE:
+                    end_move = True
+            x, y = self.next_spot((x, y), (k, j), lateral_move)
 
     def select_single_marble(self, mouse_pos, current_marble) -> None:
         """
@@ -249,7 +282,7 @@ class Abalone(pygame.sprite.Sprite):
                             self.new_marbles_range[target] = self.current_color
                         else:
                             self.marbles_pos[target] = MARBLE_BROWN
-                            # self.push_marbles(current_color)
+                            self.push_marbles(target)
                     else:
                         self.marbles_pos[target] = MARBLE_RED
 
@@ -296,11 +329,16 @@ class Abalone(pygame.sprite.Sprite):
         """
         TODO
         """
-        if self.new_marbles_range:
+        if self.marbles_range:
+            print("ntm")
             for old, new in zip(self.marbles_range, self.new_marbles_range.keys()):
                 self.marbles_pos[old] = MARBLE_FREE
                 self.marbles_pos[new] = self.current_color
             self.current_color = self.enemy(self.current_color)
+        else:
+            print("lol", self.new_marbles_range)
+            for key, value in self.new_marbles_range.items():
+                self.marbles_pos[key] = value
         self.clear_ranges()
 
     def display_current_color(self, screen):
