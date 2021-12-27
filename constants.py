@@ -7,7 +7,11 @@ pygame.init()
 SIZE_X, SIZE_Y  = 640, 640
 BACKGROUND = (30, 30, 30)
 FONT = pygame.font.SysFont("Sans", 35)
-TXT_COLOR = (255, 255, 255)
+WHITE = (255, 255, 255)
+YELLOW = (255, 255, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+ARROW_COLOR = (255, 0, 247)
 
 screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
 pygame.display.set_caption("Abalone")
@@ -32,6 +36,12 @@ MARBLE_PURPLE = pygame.image.load(
 MARBLE_YELLOW = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_yellow.png")
     ).convert_alpha()
+MARBLE_CYAN = pygame.image.load(
+    os.path.join(IMAGES_DIR, "sphere_cyan.png")
+    ).convert_alpha()
+MARBLE_BROWN = pygame.image.load(
+    os.path.join(IMAGES_DIR, "sphere_brown.png")
+    ).convert_alpha()
 MARBLE_FREE = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_empty.png")
     ).convert_alpha()
@@ -45,10 +55,10 @@ MARBLE_IMGS = {1: MARBLE_FREE, 2: MARBLE_BLUE, 3: MARBLE_YELLOW}
 STANDARD = (
     [2, 2, 2, 2, 2],
     [2, 2, 2, 2, 2, 2],
-    [1, 1, 2, 2, 2, 2, 1],
-    [1, 1, 2, 1, 1, 1, 1, 1],
-    [1, 1, 1, 2, 1, 1, 1, 1, 1],
-    [1, 1, 1, 2, 1, 1, 1, 1],
+    [1, 1, 2, 2, 2, 1, 1],
+    [1, 1, 1, 1, 3, 1, 1, 1],
+    [1, 1, 1, 1, 3, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 3, 3, 3, 1, 1],
     [3, 3, 3, 3, 3, 3],
     [3, 3, 3, 3, 3],
