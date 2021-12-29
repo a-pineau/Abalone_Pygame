@@ -1,12 +1,8 @@
 import pygame
 
-from typing import Collection
 from pygame.locals import *
 from abalone import Abalone
 from constants import *
-from user_messages import ask_messages, err_messages, info_messages
-from ordered_set import OrderedSet
-from copy import deepcopy
 
 screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
 pygame.display.set_caption("Abalone")
@@ -57,10 +53,9 @@ def main():
                     game.select_marbles_range(mouse_pos)
 
         game.display_marbles(screen)
-        if moving:
-            screen.blit(game.buffer_color, r)
         game.display_current_color(screen)
         game.display_time_elasped(screen)
+        if moving: screen.blit(game.buffer_color, r)
         pygame.display.update()
 
     pygame.quit()
