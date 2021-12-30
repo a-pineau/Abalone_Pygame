@@ -9,6 +9,7 @@ BACKGROUND = (30, 30, 30)
 FONT = pygame.font.SysFont("Sans", 35)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
+RED = (255, 0, 0)
 BLUE_MARBLE = (158, 190, 228, 255)
 YELLOW = (255, 255, 0)
 YELLOW_MARBLE = (249, 217, 84, 255)
@@ -49,7 +50,17 @@ MARBLE_FREE = pygame.image.load(
     ).convert_alpha()
 
 MARBLE_SIZE = 30
-MARBLE_IMGS = {1: MARBLE_FREE, 2: MARBLE_BLUE, 3: MARBLE_YELLOW}
+MARBLE_IMGS = {
+    1: MARBLE_FREE, 
+    2: MARBLE_BLUE, 
+    3: MARBLE_YELLOW,
+}
+MARBLE_DEBUG = {
+    MARBLE_FREE: "Free", 
+    MARBLE_BLUE: "Blue", 
+    MARBLE_YELLOW: "Yellow",
+    MARBLE_BROWN: "Brown",
+}
 
 # Initial configurations
 # -------------------------------------------------------------
@@ -59,7 +70,7 @@ STANDARD = (
     [2, 2, 2, 2, 2, 2],
     [1, 1, 2, 2, 2, 1, 1],
     [1, 1, 1, 2, 3, 1, 1, 1],
-    [1, 1, 1, 1, 3, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 3, 3, 3, 1, 1],
     [3, 3, 3, 3, 3, 3],

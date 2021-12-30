@@ -5,15 +5,14 @@ from abalone import Abalone
 from constants import *
 
 screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
-pygame.display.set_caption("Abalone")
 clock = pygame.time.Clock()
-game = Abalone(screen)
+game = Abalone()
+pygame.display.set_caption("Abalone")
 
 # Game loop
 def main():
     running = True
     moving = False
-
     while running:
         # Events handling
         for event in pygame.event.get():
@@ -31,6 +30,7 @@ def main():
                     if (game.is_inside_marble(event.pos, r.center)
                         and game.marbles_pos[r.topleft] == game.current_color):
                         moving = True
+                        print(r.topleft)
                         game.set_buffers(r.topleft)
                         game.marbles_pos[r.topleft] = MARBLE_FREE
                         break
@@ -50,12 +50,15 @@ def main():
                     game.set_buffers()
                 if p_mouse[0]:
                     mouse_pos = pygame.mouse.get_pos()
-                    game.select_marbles_range(mouse_pos)
+                    if MARBLE_RED not in game.marbles_pos.values():
+                        game.select_marbles_range(mouse_pos)
 
         game.display_marbles(screen)
         game.display_current_color(screen)
         game.display_time_elasped(screen)
-        if moving: screen.blit(game.buffer_color, r)
+        game.display_error_message(screen)
+        if moving: 
+            screen.blit(game.buffer_color, r)
         pygame.display.update()
 
     pygame.quit()
