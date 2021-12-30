@@ -4,16 +4,20 @@ from pygame.locals import *
 from abalone import Abalone
 from constants import *
 
+pygame.init()
+
 screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
 clock = pygame.time.Clock()
 game = Abalone()
 pygame.display.set_caption("Abalone")
+# channel = SOUND_01.play(2)
 
 # Game loop
 def main():
     running = True
     moving = False
     while running:
+
         # Events handling
         for event in pygame.event.get():
             p_keys = pygame.key.get_pressed()
@@ -29,6 +33,7 @@ def main():
                 for r in game.marbles_rect:
                     if (game.is_inside_marble(event.pos, r.center)
                         and game.marbles_pos[r.topleft] == game.current_color):
+                        print(r.topleft)
                         moving = True
                         game.set_buffers(r.topleft)
                         game.marbles_pos[r.topleft] = MARBLE_FREE

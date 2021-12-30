@@ -3,10 +3,20 @@ import pygame
 from pygame.locals import *
 
 pygame.init()
+useless_screen = pygame.display.set_mode()
 
-SIZE_X, SIZE_Y  = 640, 640
-BACKGROUND = (30, 30, 30)
+SIZE_X, SIZE_Y  = 750, 680
+SHIFT_X = SHIFT_Y = 36
 FONT = pygame.font.SysFont("Sans", 35)
+
+# Directories
+FILE_DIR = os.path.dirname(__file__)
+IMAGES_DIR = os.path.join(FILE_DIR, "images")
+MUSIC_DIR = os.path.join(FILE_DIR, "music")
+
+# Colors
+BACKGROUND = (30, 30, 30)
+DEAD_ZONE = (141, 141, 141)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
@@ -16,14 +26,8 @@ YELLOW_MARBLE = (249, 217, 84, 255)
 GREEN = (0, 255, 0)
 ARROW_COLOR = (255, 0, 247)
 
-screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
-pygame.display.set_caption("Abalone")
-clock = pygame.time.Clock()
-
-FILE_DIR = os.path.dirname(__file__)
-IMAGES_DIR = os.path.join(FILE_DIR, "images")
-
-# Free icons: https://www.iconshock.com/flat-icons/3d-graphics-icons/sphere-icon/
+# Images
+# https://www.iconshock.com/flat-icons/3d-graphics-icons/sphere-icon/
 MARBLE_RED = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_red.png")
     ).convert_alpha()
@@ -33,11 +37,19 @@ MARBLE_GREEN = pygame.image.load(
 MARBLE_BLUE = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_blue.png")
     ).convert_alpha()
-MARBLE_PURPLE = pygame.image.load(
-    os.path.join(IMAGES_DIR, "sphere_purple.png")
+MARBLE_BLUE_ALPHA = pygame.image.load(
+    os.path.join(IMAGES_DIR, "sphere_blue.png")
     ).convert_alpha()
+MARBLE_BLUE_ALPHA.set_alpha(128)
 MARBLE_YELLOW = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_yellow.png")
+    ).convert_alpha()
+MARBLE_YELLOW_ALPHA = pygame.image.load(
+    os.path.join(IMAGES_DIR, "sphere_yellow.png")
+    ).convert_alpha()
+MARBLE_YELLOW_ALPHA.set_alpha(128)
+MARBLE_PURPLE = pygame.image.load(
+    os.path.join(IMAGES_DIR, "sphere_purple.png")
     ).convert_alpha()
 MARBLE_CYAN = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_cyan.png")
@@ -48,6 +60,11 @@ MARBLE_BROWN = pygame.image.load(
 MARBLE_FREE = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_empty.png")
     ).convert_alpha()
+# https://icons8.com/icon/54885/skull
+SKULL = pygame.image.load(
+    os.path.join(IMAGES_DIR, "skull.png")
+).convert_alpha()
+SKULL = pygame.transform.rotozoom(SKULL, 0, 0.7) # adjusting size
 
 MARBLE_SIZE = 30
 MARBLE_IMGS = {
@@ -62,9 +79,12 @@ MARBLE_DEBUG = {
     MARBLE_BROWN: "Brown",
 }
 
-# Initial configurations
-# -------------------------------------------------------------
+# Sounds
+SOUND_01 = pygame.mixer.Sound(
+    os.path.join(MUSIC_DIR, "01_GROWING_ON_ME.wav"))
 
+
+# Initial configurations
 STANDARD = (
     [2, 2, 2, 2, 2],
     [2, 2, 2, 2, 2, 2],

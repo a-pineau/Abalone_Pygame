@@ -9,13 +9,6 @@ from copy import deepcopy
 
 pygame.init()
 
-# --------------------------------------------------------------
-FONT = pygame.font.SysFont("Sans", 35)
-screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
-pygame.display.set_caption("Abalone")
-clock = pygame.time.Clock()
-# --------------------------------------------------------------
-
 class Abalone(pygame.sprite.Sprite):
     """
     TODO
@@ -27,8 +20,9 @@ class Abalone(pygame.sprite.Sprite):
         super().__init__()
 
         self.configuration = configuration
-        self.marbles_pos = dict()
         self.marbles_rect = [] # actually needed? (i think so)
+        self.marbles_pos = dict()
+        self.dead_zone = dict()
         self.marbles_2_change = dict()
         self.buffer_line = None
         self.buffer_message = None
@@ -45,10 +39,10 @@ class Abalone(pygame.sprite.Sprite):
         """
         TODO
         """
-        y_init = SIZE_Y / 2 - 10 * MARBLE_SIZE # hard-coded (to change)
+        y_init = 30
         gap_y = MARBLE_SIZE
         for row in self.configuration:
-            x_init = 290 - len(row) * MARBLE_SIZE # hard-coded (to change)
+            x_init = SIZE_X - 350 - len(row) * MARBLE_SIZE # hard-coded (to change)
             gap_x = MARBLE_SIZE
             for element in row:
                 x = x_init + gap_x
@@ -65,8 +59,17 @@ class Abalone(pygame.sprite.Sprite):
         TODO
         """
         screen.fill(BACKGROUND)
-        for key, value in self.marbles_pos.items():
-            screen.blit(value, key)
+        for m_pos, m_color in self.marbles_pos.items():
+            screen.blit(m_color, m_pos)
+        for dz_pos, dz_color in self.dead_zone.items():
+            if dz_color == MARBLE_BLUE:
+                dead_color = MARBLE_BLUE_ALPHA
+            else:
+                dead_color = MARBLE_YELLOW_ALPHA
+            screen.blit(dead_color, dz_pos)
+            skull_rect = SKULL.get_rect()
+            skull_rect.center = (dz_pos[0] + SHIFT_X, dz_pos[1] + SHIFT_Y)
+            screen.blit(SKULL, skull_rect)
 
     def is_valid_neighboor(self, target_pos, h_range=False) -> bool:
         """
@@ -154,30 +157,6 @@ class Abalone(pygame.sprite.Sprite):
                 return True
         return False
 
-    def mark_valid_neighboors(self, current):
-        """
-        TODO
-        """
-        x, y = current
-        neighboors = (
-            (x - MARBLE_SIZE, y - 2 * MARBLE_SIZE),
-            (x + MARBLE_SIZE, y - 2 * MARBLE_SIZE),
-            (x - MARBLE_SIZE, y + 2 * MARBLE_SIZE),
-            (x + MARBLE_SIZE, y + 2 * MARBLE_SIZE),
-            (x - 2 * MARBLE_SIZE, y),
-            (x + 2 * MARBLE_SIZE, y),
-        )
-        for n in neighboors:
-            try:
-                self.marbles_pos[n] 
-            except KeyError:
-                continue
-            else:
-                if self.marbles_pos[n] == MARBLE_FREE:
-                    self.marbles_pos[n] = MARBLE_GREEN
-                elif self.marbles_pos[n] == MARBLE_BLUE:
-                    self.marbles_pos[n] = MARBLE_BROWN
-
     def push_marbles(self, target):
         move_coeffs = self.predict_direction(self.buffer_marble, target)
         enemy = self.enemy(self.current_color)
@@ -190,8 +169,10 @@ class Abalone(pygame.sprite.Sprite):
         end_move = False
         while not end_move:
             try:
-                self.marbles_pos[(x, y)]
+                self.buffer_marbles_pos[(x, y)]
             except KeyError:
+                if current_spot in (self.current_color, enemy):
+                    self.dead_zone[(x, y)] = current_spot
                 break
             
             # the buffer is used instead of the actual marble_pos
@@ -230,11 +211,16 @@ class Abalone(pygame.sprite.Sprite):
                 if current_spot == MARBLE_FREE:
                     end_move = True
             x, y = self.next_spot((x, y), move_coeffs, lateral_move)
+            
         if self.marbles_2_change:
+            self.buffer_message = None
             list_keys = list(self.marbles_2_change)
             x1, y1 = list_keys[0][0], list_keys[0][1]
             x2, y2 = list_keys[-1][0], list_keys[-1][1]
-            self.buffer_line = ((x1, y1), (x2, y2))
+            self.buffer_line = (
+                (x1 + SHIFT_X, y1 + SHIFT_Y), 
+                (x2 + SHIFT_X, y2 + SHIFT_Y)
+            )
 
 
     def select_single_marble(self, mouse_pos, current_marble) -> None:
@@ -242,6 +228,7 @@ class Abalone(pygame.sprite.Sprite):
         TODO
         """
         target = None
+        self.buffer_line = None
         init_marble = self.buffer_marble
         for t in self.marbles_rect:
             target = t.topleft
@@ -361,13 +348,9 @@ class Abalone(pygame.sprite.Sprite):
         if self.buffer_line:
             x1, y1 = self.buffer_line[0]
             x2, y2 = self.buffer_line[1]
-            if self.current_color == MARBLE_BLUE:
-                line_color = BLUE_MARBLE
-            else:
-                line_color = YELLOW_MARBLE
-            pygame.draw.line(screen, line_color, (x1+36, y1+36), (x2+36, y2+36), width)
-            pygame.draw.circle(screen, line_color, (x1+36, y1+36), width*1.5)
-            pygame.draw.circle(screen, line_color, (x2+36, y2+36), width*1.5)
+            pygame.draw.line(screen, GREEN, (x1, y1), (x2, y2), width)
+            pygame.draw.circle(screen, GREEN, (x1, y1), width*1.2)
+            pygame.draw.circle(screen, GREEN, (x2, y2), width*1.2)
 
 
     def reset_game(self) -> None:
@@ -377,6 +360,7 @@ class Abalone(pygame.sprite.Sprite):
         self.build_marbles()
         self.clear_buffers()
         self.clear_ranges()
+        self.dead_zone.clear()
 
     # --------------------------------------------------------------
     @staticmethod
