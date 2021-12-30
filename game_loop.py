@@ -30,7 +30,6 @@ def main():
                     if (game.is_inside_marble(event.pos, r.center)
                         and game.marbles_pos[r.topleft] == game.current_color):
                         moving = True
-                        print(r.topleft)
                         game.set_buffers(r.topleft)
                         game.marbles_pos[r.topleft] = MARBLE_FREE
                         break
@@ -50,13 +49,16 @@ def main():
                     game.set_buffers()
                 if p_mouse[0]:
                     mouse_pos = pygame.mouse.get_pos()
-                    if MARBLE_RED not in game.marbles_pos.values():
-                        game.select_marbles_range(mouse_pos)
+                    for r in game.marbles_rect:
+                        if game.is_inside_marble(mouse_pos, r.center):
+                            game.select_marbles_range(r)
+                            game.compute_new_marbles_range(r)
 
         game.display_marbles(screen)
         game.display_current_color(screen)
         game.display_time_elasped(screen)
         game.display_error_message(screen)
+        game.draw_circled_line(screen, 6)
         if moving: 
             screen.blit(game.buffer_color, r)
         pygame.display.update()
