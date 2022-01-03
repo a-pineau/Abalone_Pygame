@@ -1,15 +1,24 @@
 import os
+<<<<<<< HEAD
 # Manually places the window
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (100, 100)
 import math
 import pygame
+=======
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (100, 100)
+import pygame
+from pygame.locals import *
+>>>>>>> removed unused modules
 from abalone import Abalone
 from constants import *
 
 pygame.init()
 screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
 pygame.display.set_caption("Abalone")
+<<<<<<< HEAD
 game = Abalone()
+=======
+>>>>>>> removed unused modules
 
 # Game loop
 def main():
