@@ -5,9 +5,10 @@ from pygame.locals import *
 pygame.init()
 useless_screen = pygame.display.set_mode()
 
-SIZE_X, SIZE_Y  = 750, 680
+SIZE_X, SIZE_Y  = 820, 680
 SHIFT_X = SHIFT_Y = 36
-FONT = pygame.font.SysFont("Sans", 35)
+FONT = pygame.font.SysFont("Sans", 38)
+
 
 # Directories
 FILE_DIR = os.path.dirname(__file__)
@@ -24,6 +25,7 @@ BLUE_MARBLE = (158, 190, 228, 255)
 YELLOW = (255, 255, 0)
 YELLOW_MARBLE = (249, 217, 84, 255)
 GREEN = (0, 255, 0)
+GREEN_2 = (39, 151, 0)
 ARROW_COLOR = (255, 0, 247)
 
 # Images
@@ -64,7 +66,7 @@ MARBLE_FREE = pygame.image.load(
 SKULL = pygame.image.load(
     os.path.join(IMAGES_DIR, "skull.png")
 ).convert_alpha()
-SKULL = pygame.transform.rotozoom(SKULL, 0, 0.7) # adjusting size
+SKULL = pygame.transform.rotozoom(SKULL, 0, 0.7)  # adjusting size
 
 MARBLE_SIZE = 30
 MARBLE_IMGS = {
