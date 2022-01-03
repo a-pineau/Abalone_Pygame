@@ -46,6 +46,7 @@ def main():
             elif event.type == MOUSEBUTTONUP:
                 moving = False
                 game.apply_buffers()
+                # game.update_dead_zone()
                 game.update_board()
                 game.clear_buffers()
             # Moving single marble
