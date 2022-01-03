@@ -1,4 +1,7 @@
 import os
+import math
+
+from pygame import draw
 x, y = 100, 100
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 import pygame
@@ -14,7 +17,6 @@ game = Abalone()
 pygame.display.set_caption("Abalone")
 # channel = SOUND_01.play(2)
 
-
 # Game loop
 def main():
     running = True
@@ -25,8 +27,11 @@ def main():
         for event in pygame.event.get():
             p_keys = pygame.key.get_pressed()
             p_mouse = pygame.mouse.get_pressed()
-            # Quiting/resetting game
-            if event.type == KEYDOWN:
+            # Quiting game
+            if event.type == QUIT:
+                running = False
+            # Quiting (w/ escape)/Resetting game
+            elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     running = False
                 elif event.key == K_p:
@@ -37,7 +42,6 @@ def main():
                     if (game.is_inside_marble(event.pos, r.center)
                         and game.marbles_pos[r.topleft] == game.current_color
                     ):
-                        print(r.topleft)
                         moving = True
                         game.set_buffers(r.topleft)
                         game.marbles_pos[r.topleft] = MARBLE_FREE
@@ -46,7 +50,6 @@ def main():
             elif event.type == MOUSEBUTTONUP:
                 moving = False
                 game.apply_buffers()
-                # game.update_dead_zone()
                 game.update_board()
                 game.clear_buffers()
             # Moving single marble

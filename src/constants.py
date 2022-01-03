@@ -12,8 +12,8 @@ FONT = pygame.font.SysFont("Sans", 38)
 
 # Directories
 FILE_DIR = os.path.dirname(__file__)
-IMAGES_DIR = os.path.join(FILE_DIR, "images")
-MUSIC_DIR = os.path.join(FILE_DIR, "music")
+IMAGES_DIR = os.path.join(FILE_DIR, "../images")
+MUSIC_DIR = os.path.join(FILE_DIR, "../music")
 
 # Colors
 BACKGROUND = (30, 30, 30)
@@ -21,11 +21,13 @@ DEAD_ZONE = (141, 141, 141)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
+RED_2 = (207, 46, 46)
 BLUE_MARBLE = (158, 190, 228, 255)
 YELLOW = (255, 255, 0)
 YELLOW_MARBLE = (249, 217, 84, 255)
 GREEN = (0, 255, 0)
 GREEN_2 = (39, 151, 0)
+GREEN_3 = (102, 203, 112)
 ARROW_COLOR = (255, 0, 247)
 
 # Images
@@ -39,17 +41,17 @@ MARBLE_GREEN = pygame.image.load(
 MARBLE_BLUE = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_blue.png")
     ).convert_alpha()
-MARBLE_BLUE_ALPHA = pygame.image.load(
+DEAD_BLUE = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_blue.png")
     ).convert_alpha()
-MARBLE_BLUE_ALPHA.set_alpha(128)
+DEAD_BLUE.set_alpha(128)
 MARBLE_YELLOW = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_yellow.png")
     ).convert_alpha()
-MARBLE_YELLOW_ALPHA = pygame.image.load(
+DEAD_YELLOW = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_yellow.png")
     ).convert_alpha()
-MARBLE_YELLOW_ALPHA.set_alpha(128)
+DEAD_YELLOW.set_alpha(128)
 MARBLE_PURPLE = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_purple.png")
     ).convert_alpha()
@@ -91,7 +93,7 @@ STANDARD = (
     [2, 2, 2, 2, 2],
     [2, 2, 2, 2, 2, 2],
     [1, 1, 2, 2, 2, 1, 1],
-    [1, 1, 1, 2, 3, 1, 1, 1],
+    [1, 1, 1, 2, 2, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 3, 3, 3, 1, 1],
