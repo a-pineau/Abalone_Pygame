@@ -9,11 +9,9 @@ SIZE_X, SIZE_Y  = 820, 680
 SHIFT_X = SHIFT_Y = 36
 FONT = pygame.font.SysFont("Sans", 38)
 
-
 # Directories
 FILE_DIR = os.path.dirname(__file__)
 IMAGES_DIR = os.path.join(FILE_DIR, "../images")
-MUSIC_DIR = os.path.join(FILE_DIR, "../music")
 
 # Colors
 BACKGROUND = (30, 30, 30)
@@ -64,6 +62,7 @@ MARBLE_BROWN = pygame.image.load(
 MARBLE_FREE = pygame.image.load(
     os.path.join(IMAGES_DIR, "sphere_empty.png")
     ).convert_alpha()
+    
 # https://icons8.com/icon/54885/skull
 SKULL = pygame.image.load(
     os.path.join(IMAGES_DIR, "skull.png")
@@ -82,11 +81,6 @@ MARBLE_DEBUG = {
     MARBLE_YELLOW: "Yellow",
     MARBLE_BROWN: "Brown",
 }
-
-# Sounds
-SOUND_01 = pygame.mixer.Sound(
-    os.path.join(MUSIC_DIR, "01_GROWING_ON_ME.wav"))
-
 
 # Initial configurations
 STANDARD = (

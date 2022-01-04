@@ -1,28 +1,21 @@
 import os
+# Manually places the window
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (100, 100)
 import math
-
-from pygame import draw
-x, y = 100, 100
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 import pygame
-
-from pygame.locals import *
 from abalone import Abalone
 from constants import *
 
 pygame.init()
 screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
-clock = pygame.time.Clock()
-game = Abalone()
 pygame.display.set_caption("Abalone")
-# channel = SOUND_01.play(2)
+game = Abalone()
 
 # Game loop
 def main():
     running = True
     moving = False
     while running:
-
         # Events handling
         for event in pygame.event.get():
             p_keys = pygame.key.get_pressed()
@@ -40,12 +33,11 @@ def main():
             elif event.type == MOUSEBUTTONDOWN and not p_keys[K_LSHIFT]:
                 for r in game.marbles_rect:
                     if (game.is_inside_marble(event.pos, r.center)
-                        and game.marbles_pos[r.topleft] == game.current_color
-                    ):
-                        moving = True
-                        game.set_buffers(r.topleft)
-                        game.marbles_pos[r.topleft] = MARBLE_FREE
-                        break
+                        and game.marbles_pos[r.topleft] == game.current_color):
+                            moving = True
+                            game.set_buffers(r.topleft)
+                            game.marbles_pos[r.topleft] = MARBLE_FREE
+                            break
             # Updating board
             elif event.type == MOUSEBUTTONUP:
                 moving = False
@@ -71,11 +63,10 @@ def main():
         game.display_current_color(screen)
         game.display_time_elapsed(screen)
         game.display_error_message(screen)
-        game.draw_circled_line(screen, 5)
+        game.draw_circled_line(screen, GREEN_3, 4)
         if moving: 
             screen.blit(game.buffer_color, r)
         pygame.display.update()
-
     pygame.quit()
 
 
