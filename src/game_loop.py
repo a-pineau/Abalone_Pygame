@@ -1,3 +1,5 @@
+"""Implements the game loop and handles the user's events."""
+
 import sys
 import os
 # Manually places the window
@@ -11,17 +13,17 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication, QGridLayout,
                              QWidget, QLayout)
 
 
-pygame.init()
-screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
-pygame.display.set_caption("Abalone")
-game = Abalone()
-app = QApplication(sys.argv)
-end_game_popup = PopUpWindow(game)
-
 # Game loop
 def main():
+    pygame.init()
+    screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
+    pygame.display.set_caption("Abalone")
+    game = Abalone()
+    app = QApplication(sys.argv)
+    end_game_popup = PopUpWindow(game)
     running = True
     moving = False
+
     while running:
         # Events handling
         for event in pygame.event.get():
@@ -81,8 +83,8 @@ def main():
             if not running:
                 end_game_popup.close()
             app.setStyle("Fusion")
-
     pygame.quit()
+
 
 if __name__ == "__main__":
     main()

@@ -1,3 +1,12 @@
+"""Sets the constant variables.
+
+In descending order:
+- Window size and font property
+- Colours used
+- Images (please not that all images used are free to use, links provided below)
+- Initial configurations
+"""
+
 import os
 import pygame
 from pygame.locals import *
@@ -13,7 +22,7 @@ FONT = pygame.font.SysFont("Sans", 38)
 FILE_DIR = os.path.dirname(__file__)
 IMAGES_DIR = os.path.join(FILE_DIR, "../images")
 
-# Colors
+# Colours
 BACKGROUND = (30, 30, 30)
 DEAD_ZONE = (141, 141, 141)
 WHITE = (255, 255, 255)
@@ -171,6 +180,7 @@ THE_WALL = (
     [1, 1, 1, 1, 1, 1],
     [1, 1, 3, 1, 1],
 )
+
 
 if __name__ == "__main__":
     pass
