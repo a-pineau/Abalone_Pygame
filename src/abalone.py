@@ -1,12 +1,13 @@
-import pygame
+import sys
 import math
 import random
-
+import pygame
 from pygame import gfxdraw
 from pygame.locals import *
 from constants import *
 from ordered_set import OrderedSet
 from copy import deepcopy
+
 pygame.init()
 
 
@@ -518,6 +519,18 @@ class Abalone(pygame.sprite.Sprite):
             self.dead_marbles[dz_value] += 1
         self.marbles_2_change.clear()
 
+    def check_win_and_display_message(self, screen) -> bool:
+        my_font = pygame.font.SysFont("Sans", 45)
+        if self.dead_marbles[DEAD_YELLOW] == 2:
+            msg = my_font.render("Blue wins!", True, BLUE_MARBLE)
+            screen.blit(msg, (372, 5))
+            return True
+        elif self.dead_marbles[DEAD_BLUE] == 2:
+            msg = my_font.render("Yellow wins!", True, YELLOW_MARBLE)
+            screen.blit(msg, (355, 5))
+            return True
+        return False
+
     def display_current_color(self, screen) -> None:
         """Display the current color being played.
 
@@ -670,10 +683,16 @@ class Abalone(pygame.sprite.Sprite):
         time_elapsed = f"Time: {int(pygame.time.get_ticks() / 1e3)}s"
         screen.blit(FONT.render(time_elapsed, True, WHITE), (5, 5))
 
+        
 # --------------------------------------------------------------
 
-if __name__ == "__main__":
+
+def main():
     pass
+
+if __name__ == "__main__":
+    main()
+
 
 
 

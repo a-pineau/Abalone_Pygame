@@ -64,6 +64,7 @@ def main():
         game.display_time_elapsed(screen)
         game.display_error_message(screen)
         game.draw_circled_line(screen, GREEN_3, 4)
+        end_game = game.check_win_and_display_message(screen)
         if moving: 
             screen.blit(game.buffer_color, r)
         pygame.display.update()
