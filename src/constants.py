@@ -82,13 +82,6 @@ MARBLE_DEBUG = {
     MARBLE_BROWN: "Brown",
 }
 
-<<<<<<< HEAD
-=======
-# Sounds
-SOUND_01 = pygame.mixer.Sound(
-    os.path.join(MUSIC_DIR, "01_GROWING_ON_ME.wav"))
-
->>>>>>> removed unused modules
 # Initial configurations
 STANDARD = (
     [2, 2, 2, 2, 2],
