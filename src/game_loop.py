@@ -1,15 +1,22 @@
+import sys
 import os
 # Manually places the window
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (100, 100)
 import math
 import pygame
 from abalone import Abalone
+from popup_win_game import PopUpWindow
 from constants import *
+from PyQt5.QtWidgets import (QMainWindow, QApplication, QGridLayout, 
+                             QWidget, QLayout)
+
 
 pygame.init()
 screen = pygame.display.set_mode([SIZE_X, SIZE_Y])
 pygame.display.set_caption("Abalone")
 game = Abalone()
+app = QApplication(sys.argv)
+end_game_popup = PopUpWindow(game)
 
 # Game loop
 def main():
@@ -64,12 +71,18 @@ def main():
         game.display_time_elapsed(screen)
         game.display_error_message(screen)
         game.draw_circled_line(screen, GREEN_3, 4)
-        end_game = game.check_win_and_display_message(screen)
         if moving: 
             screen.blit(game.buffer_color, r)
+        game_over = game.check_win_and_display_message(screen)
         pygame.display.update()
-    pygame.quit()
+        if game_over:
+            end_game_popup.show()
+            running = end_game_popup.get_run_game()
+            if not running:
+                end_game_popup.close()
+            app.setStyle("Fusion")
 
+    pygame.quit()
 
 if __name__ == "__main__":
     main()

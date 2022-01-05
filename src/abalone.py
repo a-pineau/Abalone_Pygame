@@ -89,6 +89,8 @@ class Abalone(pygame.sprite.Sprite):
         Display the time elapsed since the game was launched.
 
     """
+    # Constructor(s)
+    # --------------------------------------------------------------
     def __init__(self, configuration=STANDARD):
         """
         TODO
@@ -109,7 +111,11 @@ class Abalone(pygame.sprite.Sprite):
         self.buffer_marbles_pos = dict()
         self.buffer_marbles_rect = []
         self.current_color = random.choice((MARBLE_BLUE, MARBLE_YELLOW))
+        self.time_end = 0
         self.build_marbles()
+
+    # Methods
+    # --------------------------------------------------------------
 
     def build_marbles(self) -> None:
         """Place the marbles to their initial position."""
@@ -537,7 +543,7 @@ class Abalone(pygame.sprite.Sprite):
         Parameter
         ---------
         screen: pygame.display (required)
-            Game's window
+            Game window
         """
 
         if self.current_color == MARBLE_YELLOW:
@@ -559,7 +565,7 @@ class Abalone(pygame.sprite.Sprite):
         Parameters
         ----------
         screen: pygame.display (required)
-            Game's window
+            Game window
         colour: tuple of integers (required)
             Colour's RGB code
         width: float (required)
@@ -575,9 +581,23 @@ class Abalone(pygame.sprite.Sprite):
             gfxdraw.aacircle(screen, x2, y2, width + 1, colour)
             gfxdraw.filled_circle(screen, x2, y2, width + 1, colour)
 
+    def display_time_elapsed(self, screen) -> None:
+        """Display the time elapsed since the game was launched.
+
+        Parameter
+        ---------
+        screen: pygame.display
+            Game window
+        """
+
+        time_elapsed = pygame.time.get_ticks() - self.time_end
+        time_elapsed = f"Time: {int(time_elapsed / 1e3)}s"
+        screen.blit(FONT.render(time_elapsed, True, WHITE), (5, 5))
+
     def reset_game(self) -> None:
         """Reset the game by pressing p (pygame constant K_p)."""
 
+        self.time_end = pygame.time.get_ticks()
         self.build_marbles()
         self.clear_buffers()
         self.marbles_2_change.clear()
@@ -588,6 +608,7 @@ class Abalone(pygame.sprite.Sprite):
         for key in self.dead_zone_yellow.keys():
             self.dead_zone_yellow[key] = MARBLE_FREE
 
+    # Static Methods
     # --------------------------------------------------------------
 
     @staticmethod
@@ -670,20 +691,6 @@ class Abalone(pygame.sprite.Sprite):
         d_mouse_center = (x_mouse - x_marble)**2 + (y_mouse - y_marble)**2
         return math.sqrt(d_mouse_center) <= MARBLE_SIZE
 
-    @staticmethod
-    def display_time_elapsed(screen) -> None:
-        """Display the time elapsed since the game was launched.
-
-        Parameter
-        ---------
-        screen: pygame.display
-            Game's window
-        """
-
-        time_elapsed = f"Time: {int(pygame.time.get_ticks() / 1e3)}s"
-        screen.blit(FONT.render(time_elapsed, True, WHITE), (5, 5))
-
-        
 # --------------------------------------------------------------
 
 
