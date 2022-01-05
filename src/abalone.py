@@ -340,7 +340,10 @@ class Abalone(pygame.sprite.Sprite):
             self.buffer_message = None
             list_keys = list(self.marbles_2_change)
             x1, y1 = list_keys[0][0], list_keys[0][1]
-            x2, y2 = list_keys[-1][0], list_keys[-1][1]
+            if self.buffer_dead_zone:
+                x2, y2 = x, y
+            else:
+                x2, y2 = list_keys[-1][0], list_keys[-1][1]
             self.buffer_line = (
                 (x1 + SHIFT_X, y1 + SHIFT_Y),
                 (x2 + SHIFT_X, y2 + SHIFT_Y))
