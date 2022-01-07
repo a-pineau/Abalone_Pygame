@@ -40,12 +40,12 @@ def main():
                     game.reset_game()
             # Selecting a single marble
             elif event.type == MOUSEBUTTONDOWN and not p_keys[K_LSHIFT]:
-                for r in game.marbles_rect:
-                    if (game.is_inside_marble(event.pos, r.center)
-                        and game.marbles_pos[r.topleft] == game.current_color):
+                for rect in game.marbles_rect:
+                    if (game.is_inside_marble(event.pos, rect.center)
+                        and game.marbles_pos[rect.topleft] == game.current_color):
                             moving = True
-                            game.set_buffers(r.topleft)
-                            game.marbles_pos[r.topleft] = MARBLE_FREE
+                            game.set_buffers(rect.topleft)
+                            game.marbles_pos[rect.topleft] = MARBLE_FREE
                             break
             # Updating board
             elif event.type == MOUSEBUTTONUP:
@@ -55,18 +55,18 @@ def main():
                 game.clear_buffers()
             # Moving single marble
             elif event.type == MOUSEMOTION and moving:
-                r.move_ip(event.rel)
-                game.select_single_marble(event.pos, r)
+                rect.move_ip(event.rel)
+                game.select_single_marble(event.pos, rect)
             # Selecting multiple marbles
             elif p_keys[K_LSHIFT]:
                 if not game.buffer_marbles_pos:
                     game.set_buffers()
                 if p_mouse[0]:
                     mouse_pos = pygame.mouse.get_pos()
-                    for r in game.marbles_rect:
-                        if game.is_inside_marble(mouse_pos, r.center):
-                            game.select_marbles_range(r)
-                            game.compute_new_marbles_range(r)
+                    for rect in game.marbles_rect:
+                        if game.is_inside_marble(mouse_pos, rect.center):
+                            game.select_marbles_range(rect)
+                            game.compute_new_marbles_range(rect)
 
         game.display_marbles(screen)
         game.display_current_color(screen)
@@ -74,7 +74,7 @@ def main():
         game.display_error_message(screen)
         game.draw_circled_line(screen, GREEN_3, 4)
         if moving: 
-            screen.blit(game.buffer_color, r)
+            screen.blit(game.buffer_color, rect)
         game_over = game.check_win_and_display_message(screen)
         pygame.display.update()
         if game_over:

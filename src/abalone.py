@@ -97,7 +97,7 @@ class Abalone(pygame.sprite.Sprite):
         """
         super().__init__()
         self.configuration = configuration
-        self.marbles_rect = [] 
+        self.marbles_rect = []
         self.marbles_pos = dict()
         self.dead_zone_blue = dict()
         self.dead_zone_yellow = dict()
@@ -128,8 +128,7 @@ class Abalone(pygame.sprite.Sprite):
                 y = y_init + gap_y
                 self.marbles_pos[(x, y)] = MARBLE_IMGS[element]
                 self.marbles_rect.append(
-                    MARBLE_IMGS[element].get_rect(topleft = (x, y))
-                )
+                    MARBLE_IMGS[element].get_rect(topleft = (x, y)))
                 gap_x += 2 * MARBLE_SIZE
             gap_y += 2 * MARBLE_SIZE
 
