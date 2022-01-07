@@ -92,9 +92,20 @@ class Abalone(pygame.sprite.Sprite):
     # Constructor
     # -----------
     def __init__(self, configuration=STANDARD):
+        """Constructor.
+
+        Calls the parent constructor and initializes all the attributes.
+        It also builds to marbles to their initial positions with respect to
+        the chosen configuration.
+
+        Parameter
+        ---------
+        configuration: list (optional, default=STANDARD)
+            Initial positions of the marbles on the board.
+            the STANDARD configuration is the one commonly used in
+            mainstream abalone games.
         """
-        TODO
-        """
+        
         super().__init__()
         self.configuration = configuration
         self.marbles_rect = []
