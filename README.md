@@ -8,4 +8,4 @@ Could be implemented:
 
 Gameplay:
 
-![Abalone_Pygame](screenshots/gameplay.png)
+![Abalone_Pygame](screenshots/abalone_gameplay.png)
