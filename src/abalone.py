@@ -5,7 +5,6 @@ import pygame
 from pygame import gfxdraw
 from pygame.locals import *
 from constants import *
-from ordered_set import OrderedSet
 from copy import deepcopy
 
 pygame.init()

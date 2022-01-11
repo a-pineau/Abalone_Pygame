@@ -14,7 +14,6 @@ from pygame.locals import *
 pygame.init()
 useless_screen = pygame.display.set_mode()
 
-print(pygame.font.get_fonts())
 SIZE_X, SIZE_Y  = 820, 680
 SHIFT_X = SHIFT_Y = 36
 FONT = pygame.font.SysFont("Calibri", 42)
@@ -22,6 +21,7 @@ FONT = pygame.font.SysFont("Calibri", 42)
 # Directories
 FILE_DIR = os.path.dirname(__file__)
 IMAGES_DIR = os.path.join(FILE_DIR, "../images")
+SNAP_FOLDER = "snapshots"
 
 # Colours
 BACKGROUND = (30, 30, 30)
